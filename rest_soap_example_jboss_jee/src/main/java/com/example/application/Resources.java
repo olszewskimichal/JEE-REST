@@ -1,4 +1,4 @@
-package com.example.helloworld;
+package com.example.application;
 
 import java.util.logging.Logger;
 
@@ -10,7 +10,6 @@ import javax.persistence.PersistenceContext;
 
 @Stateless
 public class Resources {
-	@SuppressWarnings("unused")
     @Produces
     @PersistenceContext
     private static EntityManager em;

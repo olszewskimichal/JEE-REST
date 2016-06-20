@@ -1,9 +1,9 @@
-package com.example.helloworld;
+package com.example.api;
+
+import java.util.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,12 +18,12 @@ import com.example.dao.ProductRepository;
 import com.example.entity.Product;
 import com.example.entity.ProductListFactory;
 
-@Path("")
+@Path("/product")
 @RequestScoped
-public class HelloWorld {
+public class ProductApi {
 
 	@Inject
-	private EntityManager em;
+	private transient Logger log;
 
 	@Inject
 	ProductRepository repository;
@@ -35,13 +35,15 @@ public class HelloWorld {
 	@GET
 	@Path("/generate")
 	public void createProducts() {
+		log.info("createProducts");
 		givenProduct().buildNumberOfProductsAndSave(6);
 	}
 
 	@GET
 	@Path("/generateProducts/{size}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createProducts(@PathParam("size") Integer size) {
+	public Response generateProducts(@PathParam("size") Integer size) {
+		log.info(Thread.currentThread().getStackTrace()[2].getMethodName()+" "+size);
 		return Response.status(Status.OK).entity(givenProduct().buildNumberOfProductsAndSave(size)).build();
 	}
 
@@ -63,7 +65,7 @@ public class HelloWorld {
 		product = repository.createProduct(product);
 		return Response.status(Status.OK).entity(product).build();
 	}
-	
+
 	@POST
 	@Path("/createProduct")
 	@Consumes(MediaType.APPLICATION_JSON)

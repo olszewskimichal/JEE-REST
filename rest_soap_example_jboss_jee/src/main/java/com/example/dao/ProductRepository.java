@@ -37,8 +37,7 @@ public class ProductRepository implements ProductDao {
 
 	@Override
 	public List<Product> getAllProducts() {
-		Query query = em.createNamedQuery(Product.findAllProducts);
-		return query.getResultList();
+		return em.createNamedQuery(Product.findAllProducts).getResultList();
 	}
 
 	@Override
