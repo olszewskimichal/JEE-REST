@@ -1,6 +1,7 @@
 package com.example.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Local;
 
@@ -8,9 +9,9 @@ import com.example.entity.Product;
 
 @Local
 public interface ProductDao {
-	public Product getProductById(Long id);
+	Optional<Product> getProductById(Long id);
 	
-	Product getProductByName(String name);
+	Optional<Product> getProductByName(String name);
 
 	Product createProduct(Product product);
     

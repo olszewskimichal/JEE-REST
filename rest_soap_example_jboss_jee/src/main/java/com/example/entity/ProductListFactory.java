@@ -4,14 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import com.example.dao.ProductRepository;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 
+import com.example.dao.ProductDao;
+
+@Stateless
 public class ProductListFactory {
-	private final ProductRepository repository;
-
-	public ProductListFactory(ProductRepository repository) {
-		this.repository = repository;
-	}
+	
+	@EJB
+	ProductDao repository;
 
 	public List<Product> buildNumberOfProductsAndSave(int numberOfProducts) {
 		List<Product> productList = new ArrayList<>();

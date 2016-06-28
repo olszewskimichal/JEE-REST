@@ -2,6 +2,7 @@ package com.example.api;
 
 import java.util.logging.Logger;
 
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -14,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.example.dao.ProductRepository;
+import com.example.dao.ProductDao;
 import com.example.entity.Product;
 import com.example.entity.ProductListFactory;
 
@@ -25,31 +26,31 @@ public class ProductApi {
 	@Inject
 	private transient Logger log;
 
-	@Inject
-	ProductRepository repository;
-
-	private ProductListFactory givenProduct() {
-		return new ProductListFactory(repository);
-	}
+	@EJB
+	ProductDao repository;
+	
+	@EJB
+	private ProductListFactory givenProduct;
 
 	@GET
 	@Path("/generate")
 	public void createProducts() {
 		log.info("createProducts");
-		givenProduct().buildNumberOfProductsAndSave(6);
+		givenProduct.buildNumberOfProductsAndSave(6);
 	}
 
 	@GET
 	@Path("/generateProducts/{size}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response generateProducts(@PathParam("size") Integer size) {
-		log.info(Thread.currentThread().getStackTrace()[2].getMethodName()+" "+size);
-		return Response.status(Status.OK).entity(givenProduct().buildNumberOfProductsAndSave(size)).build();
+		log.info("generate "+size+" Products ");
+		return Response.status(Status.OK).entity(givenProduct.buildNumberOfProductsAndSave(size)).build();
 	}
 
 	@GET
 	@Path("/helloworld")
 	public Response getHelloWorld() {
+		log.info("getHelloWorld");
 		String value = "Hello World";
 		return Response.status(Status.OK).entity(value).build();
 	}
@@ -58,6 +59,7 @@ public class ProductApi {
 	@Path("/createProduct/{productName}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createProduct(@PathParam("productName") String productName) {
+		log.info("createProduct GET o nazwie = "+productName);
 		Product product = new Product();
 		product.setName(productName);
 		product.setImageUrl("image");
@@ -70,6 +72,7 @@ public class ProductApi {
 	@Path("/createProduct")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createProduct(Product product) {
+		log.info("createProduct POST o nazwie = "+product.getName());
 		product = repository.createProduct(product);
 		return Response.status(Status.OK).entity(product).build();
 	}
@@ -78,13 +81,15 @@ public class ProductApi {
 	@Path("/allProduct")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllProduct() {
+		log.info("getAllProduct");
 		return Response.status(Status.OK).entity(repository.getAllProducts()).build();
 	}
 
 	@GET
 	@Path("/{productName}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getProductById(@PathParam("productName") String name) {
+	public Response getProductByName(@PathParam("productName") String name) {
+		log.info("getProductByName o nazwie = "+name);
 		return Response.status(Status.OK).entity(repository.getProductByName(name)).build();
 	}
 
@@ -92,6 +97,7 @@ public class ProductApi {
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteAllProduct() {
+		log.info("deleteAllProduct GET");
 		repository.deleteAllProduct();
 		return Response.status(Status.OK).entity("usunieto").build();
 	}

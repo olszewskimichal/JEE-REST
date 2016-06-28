@@ -1,31 +1,37 @@
 package com.example.dao;
 
 import java.util.List;
+import java.util.Optional;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import com.example.entity.Product;
+import com.exception.ProductNotFoundException;
 
-@ApplicationScoped
+@Stateless	
 public class ProductRepository implements ProductDao {
 
 	@Inject
 	private EntityManager em;
 
 	@Override
-	public Product getProductByName(String name) {
-		Query query = em.createNamedQuery(Product.findProductByName);
+	public Optional<Product> getProductByName(String name) {
+		TypedQuery<Product> query = em.createNamedQuery(Product.findProductByName, Product.class); 
 		query.setParameter("name", "%"+name.toLowerCase()+"%");
-		return (Product) query.getSingleResult();
+		return Optional.ofNullable(query.getSingleResult());
+
 	}
 	
 	@Override
-	public Product getProductById(Long id) {
-		return em.find(Product.class, id);
+	public Optional<Product> getProductById(Long id) {
+		TypedQuery<Product> query = em.createNamedQuery(Product.findProductById, Product.class); 
+		query.setParameter("id", id);
+		return Optional.ofNullable(query.getSingleResult());
 	}
 
 	@Override
@@ -37,7 +43,8 @@ public class ProductRepository implements ProductDao {
 
 	@Override
 	public List<Product> getAllProducts() {
-		return em.createNamedQuery(Product.findAllProducts).getResultList();
+		TypedQuery<Product> query = em.createNamedQuery(Product.findAllProducts, Product.class); 
+		return query.getResultList();
 	}
 
 	@Override
@@ -51,12 +58,12 @@ public class ProductRepository implements ProductDao {
 	@Override
 	@Transactional
 	public Product updateProduct(Long id, Product product) {
-		Product product1=getProductById(id);
+		Product product1=getProductById(id).orElseThrow(()->new ProductNotFoundException(id));
 		product1.setDescription(product.getDescription());
 		product1.setImageUrl(product.getImageUrl());
 		product1.setName(product.getName());
 		product1.setPrice(product.getPrice());
-		em.persist(product1);
+		em.merge(product1);
 		return product1;
 	}
 	

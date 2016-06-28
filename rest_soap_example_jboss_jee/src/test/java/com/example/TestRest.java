@@ -20,9 +20,9 @@ import com.example.entity.ProductBuilder;
 public class TestRest {
 	
     private List<Product> BuildNumberOfProductsAndSave(int i) {
-    	client.target("http://localhost:8080/rest-helloworld/delete").request().get();
+    	client.target("http://localhost:8080/rest-helloworld/api/product/delete").request().get();
     	client = ClientBuilder.newClient();
-    	List<Product> response = client.target("http://localhost:8080/rest-helloworld/generateProducts/"+i).request(MediaType.APPLICATION_JSON)
+    	List<Product> response = client.target("http://localhost:8080/rest-helloworld/api/product/generateProducts/"+i).request(MediaType.APPLICATION_JSON)
 				.get(productType);
 		return response;		
 	}
@@ -102,24 +102,24 @@ public class TestRest {
 	@Test
 	public void testGetAllProducts(){
 		System.out.println("test Resta - pobieranie wszystkich Produktow");
-		List<Product> response = client.target("http://localhost:8080/rest-helloworld/allProduct").request(MediaType.APPLICATION_JSON)
+		List<Product> response = client.target("http://localhost:8080/rest-helloworld/api/product/allProduct").request(MediaType.APPLICATION_JSON)
 				.get(productType);
 		System.out.println(response.size());
 		assertTrue( true );
 	}
 	
 	private List<Product> thenGetProductsFromApi() {
-        return client.target("http://localhost:8080/rest-helloworld/allProduct").request(MediaType.APPLICATION_JSON)
+        return client.target("http://localhost:8080/rest-helloworld/api/product/allProduct").request(MediaType.APPLICATION_JSON)
 				.get(productType);
     }
 
     private Product thenGetOneProductFromApi(String name) {
-        return client.target("http://localhost:8080/rest-helloworld/"+name).request(MediaType.APPLICATION_JSON)
+        return client.target("http://localhost:8080/rest-helloworld/api/product/"+name).request(MediaType.APPLICATION_JSON)
 				.get(Product.class);
     }
     
     private void thenCreateProductByApi(Product product) {
-		client.target("http://localhost:8080/rest-helloworld/createProduct").request(MediaType.APPLICATION_JSON)
+		client.target("http://localhost:8080/rest-helloworld/api/product/createProduct").request(MediaType.APPLICATION_JSON)
 		.post(Entity.entity(product, MediaType.APPLICATION_JSON),
 				Product.class);
 	}
