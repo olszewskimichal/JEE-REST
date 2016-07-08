@@ -17,6 +17,8 @@ public interface ProductDao {
     
     List<Product> getAllProducts();
     
+    List<Product> getProduct(Integer size,Integer page);
+    
     Long deleteProductById(Long id);
     
     Product updateProduct(Long id,Product product);

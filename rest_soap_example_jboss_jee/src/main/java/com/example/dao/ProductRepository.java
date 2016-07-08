@@ -73,4 +73,12 @@ public class ProductRepository implements ProductDao {
 		Query query = em.createNamedQuery(Product.deleteAllProduct);
 		query.executeUpdate();
 	}
+
+	@Override
+	public List<Product> getProduct(Integer size, Integer page) {
+		TypedQuery<Product> query = em.createNamedQuery(Product.findAllProducts, Product.class);
+		query.setFirstResult(((page-1)*size));
+		query.setMaxResults(size);
+		return query.getResultList();
+	}
 }

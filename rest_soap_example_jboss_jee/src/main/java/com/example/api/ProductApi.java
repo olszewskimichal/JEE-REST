@@ -46,6 +46,14 @@ public class ProductApi {
 		log.info("generate "+size+" Products ");
 		return Response.status(Status.OK).entity(givenProduct.buildNumberOfProductsAndSave(size)).build();
 	}
+	
+	@GET
+	@Path("/products/{size}/{page}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getProductsBySizeAndPage(@PathParam("size") Integer size,@PathParam("page") Integer page) {
+		log.info("getAllProduct");
+		return Response.status(Status.OK).entity(repository.getProduct(size, page)).build();
+	}
 
 	@GET
 	@Path("/helloworld")
